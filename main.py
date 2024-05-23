@@ -30,28 +30,30 @@ def display_pokémon_details(pokémon):
     print(f"\nPokémon:            {pokémon}")
     print(f"Types:              {pokémon.types}")
     print("Stats:")
-    print(f"  HP:               {pokémon.get_stat('hp'):>3}")  # Right-align with width 6
-    print(f"  Attack:           {pokémon.get_stat('attack'):>3}")
-    print(f"  Defense:          {pokémon.get_stat('defense'):>3}")
-    print(f"  Special Attack:   {pokémon.get_stat('sp. attack'):>3}")
-    print(f"  Special Defense:  {pokémon.get_stat('sp. defense'):>3}")
-    print(f"  Speed:            {pokémon.get_stat('speed'):>3}")
+    print(f"  HP:               {pokémon.stats[0]:>3}")
+    print(f"  Attack:           {pokémon.stats[1]:>3}")
+    print(f"  Defense:          {pokémon.stats[2]:>3}")
+    print(f"  Special Attack:   {pokémon.stats[3]:>3}")
+    print(f"  Special Defense:  {pokémon.stats[4]:>3}")
+    print(f"  Speed:            {pokémon.stats[5]:>3}")
     print(f"  Total:            {pokémon.total:>3}\n")
 
 def compare_pokémon(pokémon1, pokémon2):
     """
-    Compare two Pokémon based on their names.
+    Compare two Pokémon based on their total stats.
 
     Args:
         pokémon1 (Pokémon): The first Pokémon to compare.
         pokémon2 (Pokémon): The second Pokémon to compare.
 
-    Prints a comparison result based on the names of the Pokémon.
+    Prints a comparison result based on the total stats of the Pokémon.
     """
     if pokémon1 == pokémon2:
-        print(f'{pokémon1} = {pokémon2}\n')
+        print(f"{pokémon1}'s stat total is IDENTIAL to {pokémon2}'s stat total\n")
+    elif pokémon1 > pokémon2:
+        print(f"{pokémon1}'s stat total is GREATER than {pokémon2}' stat total\n")
     else:
-        print(f'{pokémon1} {"<" if pokémon1.name < pokémon2.name else ">"} {pokémon2}\n')
+        print(f"{pokémon1}'s stat total is LESSER than {pokémon2}' stat total\n")
 
 def main():
     """
@@ -59,7 +61,7 @@ def main():
     
     This function loads Pokémon data and allows the user to:
     - Enter a Pokémon name or number to view its details.
-    - Compare two Pokémon based on their names.
+    - Compare two Pokémon based on their total stats.
     """
     load_data()
 
@@ -77,7 +79,7 @@ def main():
                 action = input(f"What would you like to do next? \n"
                                "a. See another Pokémon\n"
                                "b. Compare to another Pokémon\n"
-                               "c. Quit\n").strip().lower()
+                               "c. Quit\n\n").strip().lower()
 
                 if action == 'a':
                     break
