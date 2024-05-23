@@ -1,15 +1,9 @@
-# Program: Simple Pokédex Class
-# Purpose: A program to interact with a database of Pokémon,
-#          allowing users to view details and compare different Pokémon.
-# Author:  Nish Patel
-# Date:    April 30, 2024
-
 class Pokémon:
     """A class representing a Pokémon with its attributes and methods."""
 
     __pokémon_data = {}
 
-    def __init__(self, number, name, types, stats):
+    def __init__(self, number: int, name: str, types: list[str], stats: tuple[int, int, int, int, int, int]):
         """
         Initializes a Pokémon instance.
 
@@ -18,14 +12,26 @@ class Pokémon:
             name (str): The name of the Pokémon.
             types (list of str): The types of the Pokémon.
             stats (tuple of int): The base stats of the Pokémon.
+
+        Raises:
+            ValueError: If any of the input values are invalid.
         """
+        if not isinstance(number, int):
+            raise ValueError("number must be an integer")
+        if not isinstance(name, str):
+            raise ValueError("name must be a string")
+        if not all(isinstance(t, str) for t in types) or not (1 <= len(types) <= 2):
+            raise ValueError("types must be a list of one or two strings")
+        if not all(isinstance(stat, int) for stat in stats) or len(stats) != 6:
+            raise ValueError("stats must be a tuple of six integers")
+
         self.__number = number
         self.__name = name
         self.__types = types
         self.__stats = stats
         self.__total = sum(stats)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Returns a string representation of the Pokémon.
 
@@ -34,16 +40,16 @@ class Pokémon:
         """
         return f"{self.__name.capitalize()} (#{self.__number})"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Returns a string representation of the Pokémon for debugging purposes.
 
         Returns:
             str: A string representation of the Pokémon.
         """
-        return f"Pokémon({self.__number}, '{self.__name}', '{self.__types}', {self.__stats})"
+        return f"Pokémon({self.__number}, '{self.__name}', {self.__types}, {self.__stats})"
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Checks if two Pokémon instances are equal based on their total stats.
 
@@ -55,7 +61,7 @@ class Pokémon:
         """
         return self.__total == other.__total
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Checks if two Pokémon instances are not equal based on their total stats.
 
@@ -67,7 +73,7 @@ class Pokémon:
         """
         return self.__total != other.__total
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         """
         Checks if one Pokémon instance has less total stats than the other.
 
@@ -79,7 +85,7 @@ class Pokémon:
         """
         return self.__total < other.__total
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         """
         Checks if one Pokémon instance has less or equal total stats than the other.
 
@@ -91,7 +97,7 @@ class Pokémon:
         """
         return self.__total <= other.__total
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         """
         Checks if one Pokémon instance has greater total stats than the other.
 
@@ -103,7 +109,7 @@ class Pokémon:
         """
         return self.__total > other.__total
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         """
         Checks if one Pokémon instance has greater or equal total stats than the other.
 
@@ -116,7 +122,7 @@ class Pokémon:
         return self.__total >= other.__total
 
     @property
-    def number(self):
+    def number(self) -> int:
         """
         Getter for the Pokedex number of the Pokémon.
 
@@ -126,7 +132,7 @@ class Pokémon:
         return self.__number
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
         Getter for the name of the Pokémon.
 
@@ -136,20 +142,17 @@ class Pokémon:
         return self.__name
 
     @property
-    def types(self):
+    def types(self) -> str:
         """
         Getter for the types of the Pokémon.
 
         Returns:
             str: The types of the Pokémon, separated by commas if there are two types.
         """
-        if len(self.__types) == 2:
-            return f"{self.__types[0]}, {self.__types[1]}"
-        else:
-            return self.__types[0]
+        return ", ".join(self.__types)
 
     @property
-    def stats(self):
+    def stats(self) -> tuple[int, int, int, int, int, int]:
         """
         Getter for the base stats of the Pokémon.
 
@@ -157,9 +160,9 @@ class Pokémon:
             tuple of int: The base stats of the Pokémon.
         """
         return self.__stats
-    
+
     @property
-    def total(self):
+    def total(self) -> int:
         """
         Getter for the total sum of the base stats of the Pokémon.
 
@@ -168,7 +171,7 @@ class Pokémon:
         """
         return self.__total
 
-    def get_stat(self, stat_name):
+    def get_stat(self, stat_name: str) -> int:
         """
         Gets the value of a specific stat of the Pokémon.
 
@@ -189,28 +192,39 @@ class Pokémon:
             raise ValueError(f"Invalid stat name: {stat_name}")
 
     @classmethod
-    def load_pokémon_data(cls, filename='all_pokémon.txt'):
+    def load_pokémon_data(cls, filename: str = 'all_pokémon.txt'):
         """
         Loads Pokémon data from a file and initializes Pokémon instances.
 
         Args:
             filename (str): The name of the file containing Pokémon data.
+
+        Raises:
+            FileNotFoundError: If the file does not exist.
+            ValueError: If the file contents are not properly formatted.
         """
-        with open(filename, 'r') as file:
-            next(file)
-            for line in file:
-                parts = line.strip().split(',')
-                number = parts[0]
-                name = parts[1]
-                types = [parts[2]]
-                if parts[3]:
-                    types.append(parts[3])
-                stats = tuple(map(int, parts[4:]))
-                pokémon = cls(number, name.lower(), types, stats)
-                cls.__pokémon_data[name.lower()] = pokémon
+        try:
+            with open(filename, 'r') as file:
+                next(file)
+                for line in file:
+                    parts = line.strip().split(',')
+                    if len(parts) < 10:
+                        raise ValueError("Incorrect file format")
+                    number = int(parts[0])
+                    name = parts[1].strip().lower()
+                    types = [parts[2].strip()]
+                    if parts[3].strip():
+                        types.append(parts[3].strip())
+                    stats = tuple(map(int, parts[4:10]))
+                    pokémon = cls(number, name, types, stats)
+                    cls.__pokémon_data[name] = pokémon
+        except FileNotFoundError as e:
+            print(f"File not found: {e}")
+        except ValueError as e:
+            print(f"Error in file format: {e}")
 
     @classmethod
-    def get_pokémon_details(cls, pokémon_input):
+    def get_pokémon_details(cls, pokémon_input: str or int):
         """
         Retrieves details of a Pokémon by its name or Pokedex number.
 
@@ -220,11 +234,11 @@ class Pokémon:
         Returns:
             Pokémon or None: The Pokémon instance if found, None otherwise.
         """
-        pokémon_input = str(pokémon_input).lower()
+        pokémon_input = str(pokémon_input).strip().lower()
         if pokémon_input in cls.__pokémon_data:
             return cls.__pokémon_data[pokémon_input]
         elif pokémon_input.isdigit():
             for pokémon in cls.__pokémon_data.values():
-                if pokémon.number == pokémon_input:
+                if pokémon.number == int(pokémon_input):
                     return pokémon
         return None
